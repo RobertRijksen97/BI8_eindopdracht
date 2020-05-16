@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from Bio import Entrez
+from datetime import date
 
 app = Flask(__name__)
 
@@ -23,22 +24,31 @@ def textmined():
 
 @app.route('/resultaat', methods=['get', 'post'])
 def result():
-    #print(request)
     zoekwoord = request.form["woord"]
-    gezocht, aantal = zoeken(zoekwoord)
+    try:
+        jaar = request.form["jaar"]
+        jaar = jaar + '/01/01'
+    except:
+        jaar = "0/0/0"
+    gezocht, aantal = zoeken(zoekwoord, jaar)
     id_lijst = gezocht['IdList']
     details = details_ophalen(id_lijst)
     samenvatting = verkrijg_titel(details, zoekwoord)
     return render_template("resultaat.html") + samenvatting
 
-def zoeken(zoekwoord):
+def zoeken(zoekwoord, jaar):
+    vandaag = date.today()
+    vandaag = str(vandaag).replace('-', '/')
     Entrez.email = 'example@mail.com'
     handle = Entrez.esearch(db='pubmed',
                             sort='relevance',
                             retmode='xml',
                             retmax=10,
+                            mindate=jaar,
+                            maxdate=vandaag,
                             term=zoekwoord)
     results = Entrez.read(handle)
+    print(results)
     aantal = results['Count']
     return results, aantal
 
