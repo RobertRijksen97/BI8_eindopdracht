@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 from Bio import Entrez
 from datetime import date
+import re
 
 app = Flask(__name__)
 
@@ -33,7 +34,8 @@ def result():
     gezocht, aantal = zoeken(zoekwoord, jaar)
     id_lijst = gezocht['IdList']
     details = details_ophalen(id_lijst)
-    samenvatting = verkrijg_titel(details, zoekwoord)
+    samenvatting, abstracts = verkrijg_titel(details, zoekwoord)
+    gen_uit_abstract(abstracts)
     return render_template("resultaat.html") + samenvatting
 
 def zoeken(zoekwoord, jaar):
@@ -43,12 +45,12 @@ def zoeken(zoekwoord, jaar):
     handle = Entrez.esearch(db='pubmed',
                             sort='relevance',
                             retmode='xml',
-                            retmax=10,
+                            retmax=30,
                             mindate=jaar,
                             maxdate=vandaag,
                             term=zoekwoord)
     results = Entrez.read(handle)
-    print(results)
+    #print(results)
     aantal = results['Count']
     return results, aantal
 
@@ -63,17 +65,33 @@ def details_ophalen(id_lijst):
 
 def verkrijg_titel(publicaties, zoekwoord):
     overzicht = "<table><tr><th>zoekwoord</th><th>publicatiedatum</th><th>artikeltitel pubmed</th></tr>"
+    abstracts = ""
     for i, paper in enumerate(publicaties['PubmedArticle']):
         try:
             year = int(paper['MedlineCitation']['Article']['Journal']['JournalIssue']['PubDate']['Year'])
             artikel = (paper['MedlineCitation']['Article']["ArticleTitle"])
+            abstract = (paper['MedlineCitation']['Article']["Abstract"]["AbstractText"])
             overzicht = overzicht + "<tr><td>" + zoekwoord +"</td>" + "<td>" + str(year) + "</td><td>" + str(artikel)\
                         + "</td></tr>"
+            abstracts = abstracts + str(abstract) + "\n"
         except:
             pass
-    print(overzicht)
     overzicht = overzicht + "</table>"
-    return overzicht
+    return overzicht, abstracts
+
+
+def gen_uit_abstract(abstracts):
+    abstracts = abstracts.split('\n')
+    for abstract in abstracts:
+        abstract = abstract.split(' ')
+        for word in abstract:
+            if word.isalpha():
+                if word.isupper():
+                    print(word)
+            elif re.search(r'\d', word):
+                if not word.isdigit():
+                    print(word)
+        print(abstract)
 
 @app.route('/parameters', methods=['get', 'post'])
 def parameters():
