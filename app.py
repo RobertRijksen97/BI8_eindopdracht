@@ -85,13 +85,14 @@ def gen_uit_abstract(abstracts):
     for abstract in abstracts:
         abstract = abstract.split(' ')
         for word in abstract:
-            if word.isalpha():
-                if word.isupper():
-                    print(word)
-            elif re.search(r'\d', word):
-                if not word.isdigit():
-                    print(word)
-        print(abstract)
+            gen = re.sub('[\W_]+', '', word)
+            if len(gen) > 2 and len(gen) < 6 and not gen.startswith('p'):
+                if gen.isalpha():
+                    if gen.isupper():
+                        print(gen)
+                elif re.search(r'\d', word):
+                    if not gen.isdigit():
+                        print(gen)
 
 @app.route('/parameters', methods=['get', 'post'])
 def parameters():
