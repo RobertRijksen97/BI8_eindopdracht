@@ -35,7 +35,8 @@ def result():
     id_lijst = gezocht['IdList']
     details = details_ophalen(id_lijst)
     samenvatting, abstracts = verkrijg_titel(details, zoekwoord)
-    gen_uit_abstract(abstracts)
+    mogelijke_genen = gen_uit_abstract(abstracts)
+    verwijder_non_gen(mogelijke_genen)
     return render_template("resultaat.html") + samenvatting
 
 def zoeken(zoekwoord, jaar):
@@ -81,18 +82,35 @@ def verkrijg_titel(publicaties, zoekwoord):
 
 
 def gen_uit_abstract(abstracts):
+    genen = []
     abstracts = abstracts.split('\n')
     for abstract in abstracts:
         abstract = abstract.split(' ')
+        #print(abstract)
+        gen_per_artikel = []
         for word in abstract:
             gen = re.sub('[\W_]+', '', word)
-            if len(gen) > 2 and len(gen) < 6 and not gen.startswith('p'):
+            if len(gen) > 2 and len(gen) < 10 and gen not in gen_per_artikel and not gen.startswith('p'):
                 if gen.isalpha():
                     if gen.isupper():
-                        print(gen)
+                        #print(gen)
+                        gen_per_artikel.append(gen)
                 elif re.search(r'\d', word):
                     if not gen.isdigit():
-                        print(gen)
+                        #print(gen)
+                        gen_per_artikel.append(gen)
+        genen.append(gen_per_artikel)
+    print(genen)
+    return genen
+
+def verwijder_non_gen(mogelijke_genen):
+    geen_gen = ["OMIM", "DNA", "CONCLUSION", "AND", "AIM", "THE", "STUDY", "TRIAL", "PURPOSE", "METHOD", "RESULTS",
+                "METHODS", "CLINICAL", "CASE", "RELEVANCE", "OBJECTIVE"]
+    for artikel in mogelijke_genen:
+        for gen in artikel:
+            if gen in geen_gen:
+                artikel.remove(gen)
+    print(mogelijke_genen)
 
 @app.route('/parameters', methods=['get', 'post'])
 def parameters():
