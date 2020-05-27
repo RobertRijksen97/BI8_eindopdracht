@@ -1,23 +1,23 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2020-05-27 16:59:14.977
+-- Last modification date: 2020-05-27 17:18:04.403
 
 -- tables
 -- Table: Article
 CREATE TABLE Article (
+    accession varchar(15) NOT NULL,
     doi text NOT NULL,
     article_title text NOT NULL,
     authors text NOT NULL,
     date date NOT NULL,
-    CONSTRAINT Article_pk PRIMARY KEY (doi)
+    CONSTRAINT Article_pk PRIMARY KEY (accession)
 );
 
 -- Table: Databron
 CREATE TABLE Databron (
     `database` varchar(15) NOT NULL,
-    accession varchar(15) NOT NULL,
     Gene_gene_id int NOT NULL,
     Disease_disease_id int NOT NULL,
-    Article_doi text NOT NULL,
+    Article_accession varchar(15) NOT NULL,
     CONSTRAINT Databron_pk PRIMARY KEY (`database`)
 );
 
@@ -38,8 +38,8 @@ CREATE TABLE Gene (
 
 -- foreign keys
 -- Reference: Databron_Article (table: Databron)
-ALTER TABLE Databron ADD CONSTRAINT Databron_Article FOREIGN KEY Databron_Article (Article_doi)
-    REFERENCES Article (doi);
+ALTER TABLE Databron ADD CONSTRAINT Databron_Article FOREIGN KEY Databron_Article (Article_accession)
+    REFERENCES Article (accession);
 
 -- Reference: Databron_Disease (table: Databron)
 ALTER TABLE Databron ADD CONSTRAINT Databron_Disease FOREIGN KEY Databron_Disease (Disease_disease_id)
