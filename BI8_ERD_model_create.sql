@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2020-05-27 17:18:04.403
+-- Last modification date: 2020-05-28 11:53:57.825
 
 -- tables
 -- Table: Article
@@ -10,15 +10,6 @@ CREATE TABLE Article (
     authors text NOT NULL,
     date date NOT NULL,
     CONSTRAINT Article_pk PRIMARY KEY (accession)
-);
-
--- Table: Databron
-CREATE TABLE Databron (
-    `database` varchar(15) NOT NULL,
-    Gene_gene_id int NOT NULL,
-    Disease_disease_id int NOT NULL,
-    Article_accession varchar(15) NOT NULL,
-    CONSTRAINT Databron_pk PRIMARY KEY (`database`)
 );
 
 -- Table: Disease
@@ -36,17 +27,26 @@ CREATE TABLE Gene (
     CONSTRAINT Gene_pk PRIMARY KEY (gene_id)
 );
 
+-- Table: Gene_Disease
+CREATE TABLE Gene_Disease (
+    gene_disease_id int NOT NULL,
+    Gene_gene_id int NOT NULL,
+    Disease_disease_id int NOT NULL,
+    Article_accession varchar(15) NOT NULL,
+    CONSTRAINT Gene_Disease_pk PRIMARY KEY (gene_disease_id)
+);
+
 -- foreign keys
--- Reference: Databron_Article (table: Databron)
-ALTER TABLE Databron ADD CONSTRAINT Databron_Article FOREIGN KEY Databron_Article (Article_accession)
+-- Reference: Gene_Disease_Article (table: Gene_Disease)
+ALTER TABLE Gene_Disease ADD CONSTRAINT Gene_Disease_Article FOREIGN KEY Gene_Disease_Article (Article_accession)
     REFERENCES Article (accession);
 
--- Reference: Databron_Disease (table: Databron)
-ALTER TABLE Databron ADD CONSTRAINT Databron_Disease FOREIGN KEY Databron_Disease (Disease_disease_id)
+-- Reference: Gene_Disease_Disease (table: Gene_Disease)
+ALTER TABLE Gene_Disease ADD CONSTRAINT Gene_Disease_Disease FOREIGN KEY Gene_Disease_Disease (Disease_disease_id)
     REFERENCES Disease (disease_id);
 
--- Reference: Databron_Gene (table: Databron)
-ALTER TABLE Databron ADD CONSTRAINT Databron_Gene FOREIGN KEY Databron_Gene (Gene_gene_id)
+-- Reference: Gene_Disease_Gene (table: Gene_Disease)
+ALTER TABLE Gene_Disease ADD CONSTRAINT Gene_Disease_Gene FOREIGN KEY Gene_Disease_Gene (Gene_gene_id)
     REFERENCES Gene (gene_id);
 
 -- End of file.
