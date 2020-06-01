@@ -1,5 +1,6 @@
 <html lang="en">
 <link rel="stylesheet" type="text/css" href="../static/gene.css">
+<link href="multiselect.css" rel="stylesheet">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -47,14 +48,15 @@ Klik daarna op zoek om te zoeken. &emsp;&emsp;&emsp;<b>(voor
     meer informatie, klik op het vraagteken rechtsboven)</b>
 <form method="post" action="/resultaat">
     <label>
-        <input list="categorien" name="categorie">
+        <input list="MultiSelect" name="categorie">
     </label>
-    <datalist id="categorien">
+
+    <select id="multiSelect" multiple="multiple">
         <option value="Gene1">Gene1</option>
         <option value="Gene2">Gene2</option>
         <option value="Gene3">Gene3</option>
         <option value="Gene4">Gene4</option>
-    </datalist>
+    </select>
     <label>
         <input name="woord" type="text" placeholder="Voer zoekwoord in"/>
     </label>
@@ -68,4 +70,6 @@ Klik daarna op zoek om te zoeken. &emsp;&emsp;&emsp;<b>(voor
 
 </form>
 <br>
+<script src="multiselect.min.js"></script>
+
 
