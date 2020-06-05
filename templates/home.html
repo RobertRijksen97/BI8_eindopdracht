@@ -1,48 +1,56 @@
+<!DOCTYPE html>
 <html lang="en">
-<link rel="stylesheet" type="text/css" href="../static/home.css">
-<head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-        <link rel="stylesheet" href="https://unpkg.com/picnic">
+
+    <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
-        <link rel="stylesheet"
-              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <title>Textmining ziektegenen</title>
+        <link rel="stylesheet" type="text/css" href="static/home.css">
+    </head>
 
-    <title> Home</title>
+    <body>
+        <div id="header-img"></div>
 
+        <nav>
+            <ul>
+                <li><a href="{{ url_for ('textminer') }}">textminer</a>
+                    <ul>
+                        <li><a href="{{ url_for ('homepage') }}">information</a></li>
+                        <li><a href="{{ url_for ('contact') }}">contact</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
 
-</head>
-<body>
-
-<!-- Navbar -->
-<middle>
-    <div class="w3-top">
-        <div class="w3-bar w3-black w3-card">
-            <a class="w3-bar-item w3-button w3-padding-large w3-hide-medium w3-hide-large w3-right"
-               href="javascript:void(0)" onclick="myFunction()"
-               title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
-            <a href="{{ url_for ('homepage') }}"
-               class="w3-bar-item w3-button w3-padding-large">HOME</a>
-            <a href="{{ url_for ('textminer') }}"
-               class="w3-bar-item w3-button w3-padding-large w3-hide-small">Textminer</a>
+        <div class="container">
+            <div class="info-text">
+                <h1>Pubmed Textmining</h1>
+                <p>Om een zo goed mogelijke diagnose te kunnen stellen met behulp van genoomdiagnostiek met
+                    genpanel analyse is het belangrijk dat naast deze genpanels ook de meest recente gepubliceerde
+                    varianten van genen met een vergelijkbaar ziektebeeld/ziektekenmerken bij de hand te hebben.
+                    Pubmed textmining geeft de mogelijkheid om de meest recent gepubliceerde artikelen te vinden
+                    door het ingeven van zoektermen. Het resultaat zal een overzicht tonen met bijbehorende
+                    zoektermen, publicatiedatum, artikelen en genen.
+                </p>
+            </div>
         </div>
-    </div>
-</middle>
 
-<a class="tooltip_help" id="child1">
-    <img src="https://png.pngtree.com/svg/20170516/fbefc0bf9c.svg" width="25"
-         height="25" alt="d">
-    <span><u>Info</u><br>
-Hier kan algemene info
-  </span></a>
+        <div id="fix-img"></div>
 
-<br><br>
-Textminer pubmed.<br>
-HOME PAGINA
+        <div class="container">
+            <div class="info-text">
+                <h1>Researchers</h1>
+                <p>Om een zo goed mogelijke diagnose te kunnen stellen met behulp van genoomdiagnostiek met
+                    genpanel analyse is het belangrijk dat naast deze genpanels ook de meest recente gepubliceerde
+                    varianten van genen met een vergelijkbaar ziektebeeld/ziektekenmerken bij de hand te hebben.
+                    Pubmed textmining geeft de mogelijkheid om de meest recent gepubliceerde artikelen te vinden
+                    door het ingeven van zoektermen. Het resultaat zal een overzicht tonen met bijbehorende
+                    zoektermen, publicatiedatum, artikelen en genen.
+                </p>
+            </div>
+        </div>
 
-
-<br>
+        <div id="footer">
+            <img class="rad-logo" src="../static/img/Radboudumc-logo.jpg">
+	    </div>
+    </body>
+</html>

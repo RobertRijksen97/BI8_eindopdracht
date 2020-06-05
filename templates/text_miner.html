@@ -1,67 +1,121 @@
+{#<html lang="en">#}
+{#<link rel="stylesheet" type="text/css" href="../static/gene.css">#}
+{#<head>#}
+{#        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>#}
+{#        <meta name="viewport" content="width=device-width, initial-scale=1"/>#}
+{#        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>#}
+{#        <link rel="stylesheet" href="https://unpkg.com/picnic">#}
+{#        <meta charset="UTF-8">#}
+{#        <meta name="viewport" content="width=device-width, initial-scale=1">#}
+{#        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">#}
+{#        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">#}
+{#        <link rel="stylesheet"#}
+{#              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">#}
+{##}
+{#    <title> Textminer</title>#}
+{##}
+{##}
+{#</head>#}
+{#<body>#}
+{##}
+{#<!-- Navbar -->#}
+{#<middle>#}
+{#    <div class="w3-top">#}
+{#        <div class="w3-bar w3-black w3-card">#}
+{#            <a class="w3-bar-item w3-button w3-padding-large w3-hide-medium w3-hide-large w3-right"#}
+{#               href="javascript:void(0)" onclick="myFunction()"#}
+{#               title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>#}
+{#            <a href="{{ url_for ('homepage') }}"#}
+{#               class="w3-bar-item w3-button w3-padding-large">HOME</a>#}
+{#            <a href="{{ url_for ('textminer') }}"#}
+{#               class="w3-bar-item w3-button w3-padding-large w3-hide-small">Textminer</a>#}
+{#        </div>#}
+{#    </div>#}
+{#</middle>#}
+{##}
+{#<a class="tooltip_help" id="child1">#}
+{#    <img src="https://png.pngtree.com/svg/20170516/fbefc0bf9c.svg" width="25"#}
+{#         height="25" alt="d">#}
+{#    <span><u>Info</u><br>#}
+{#Hier kan algemene info#}
+{#  </span></a>#}
+{##}
+{#<br><br>#}
+{#Textminer pubmed.<br>#}
+{#Voer een fenotype in en een gen.<br>#}
+{#Klik daarna op zoek om te zoeken. &emsp;&emsp;&emsp;<b>(voor#}
+{#    meer informatie, klik op het vraagteken rechtsboven)</b>#}
+{#<form method="post" action="/resultaat">#}
+{#    <label>#}
+{#        <input list="categorien" name="categorie">#}
+{#    </label>#}
+{#    <datalist id="categorien">#}
+{#        <option value="Gene1">Gene1</option>#}
+{#        <option value="Gene2">Gene2</option>#}
+{#        <option value="Gene3">Gene3</option>#}
+{#        <option value="Gene4">Gene4</option>#}
+{#    </datalist>#}
+{#    <label>#}
+{#        <input name="woord" type="text" placeholder="Voer zoekwoord in"/>#}
+{#    </label>#}
+{#    <button type="submit" formaction="/parameters"> +Parameters</button>#}
+{#    <button type="submit"> Zoek!</button>#}
+{##}
+{##}
+{#</form>#}
+{##}
+{#<br>#}
+
+<!DOCTYPE html>
 <html lang="en">
-<link rel="stylesheet" type="text/css" href="../static/gene.css">
-<head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-        <link rel="stylesheet" href="https://unpkg.com/picnic">
+
+    <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
-        <link rel="stylesheet"
-              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <title>Textmining ziektegenen</title>
+        <link rel="stylesheet" type="text/css" href="static/home.css">
+    </head>
 
-    <title> Textminer</title>
+    <body>
+        <div id="header-img"></div>
 
+        <nav>
+            <ul>
+                <li><a href="{{ url_for ('textminer') }}">textminer</a>
+                    <ul>
+                        <li><a href="{{ url_for ('homepage') }}">information</a></li>
+                        <li><a href="{{ url_for ('contact') }}">contact</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
 
-</head>
-<body>
+        <div class="container">
+            <div class="info-text">
+                <h1>Textminer</h1>
+                <p>Voer een fenotype in en een gen.</p>
+                <p>Klik daarna op zoek om te zoeken.</p>
+            </div>
 
-<!-- Navbar -->
-<middle>
-    <div class="w3-top">
-        <div class="w3-bar w3-black w3-card">
-            <a class="w3-bar-item w3-button w3-padding-large w3-hide-medium w3-hide-large w3-right"
-               href="javascript:void(0)" onclick="myFunction()"
-               title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
-            <a href="{{ url_for ('homepage') }}"
-               class="w3-bar-item w3-button w3-padding-large">HOME</a>
-            <a href="{{ url_for ('textminer') }}"
-               class="w3-bar-item w3-button w3-padding-large w3-hide-small">Textminer</a>
+            <form class="data-form" method="post" action="/resultaat">
+                <label>
+                    <input list="categorien" name="categorie">
+                </label>
+                <datalist id="categorien">
+                    <option value="Gene1">Gene1</option>
+                    <option value="Gene2">Gene2</option>
+                    <option value="Gene3">Gene3</option>
+                    <option value="Gene4">Gene4</option>
+                </datalist>
+                <label>
+                    <input name="woord" type="text" placeholder="Voer zoekwoord in"/>
+                </label>
+                <button class="button-form" type="submit" formaction="/parameters"> +Parameters</button>
+                <button class="button-form" type="submit"> Zoek!</button>
+            </form>
         </div>
-    </div>
-</middle>
 
-<a class="tooltip_help" id="child1">
-    <img src="https://png.pngtree.com/svg/20170516/fbefc0bf9c.svg" width="25"
-         height="25" alt="d">
-    <span><u>Info</u><br>
-Hier kan algemene info
-  </span></a>
-
-<br><br>
-Textminer pubmed.<br>
-Voer een fenotype in en een gen.<br>
-Klik daarna op zoek om te zoeken. &emsp;&emsp;&emsp;<b>(voor
-    meer informatie, klik op het vraagteken rechtsboven)</b>
-<form method="post" action="/resultaat">
-    <label>
-        <input list="categorien" name="categorie">
-    </label>
-    <datalist id="categorien">
-        <option value="Gene1">Gene1</option>
-        <option value="Gene2">Gene2</option>
-        <option value="Gene3">Gene3</option>
-        <option value="Gene4">Gene4</option>
-    </datalist>
-    <label>
-        <input name="woord" type="text" placeholder="Voer zoekwoord in"/>
-    </label>
-    <button type="submit" formaction="/parameters"> +Parameters</button>
-    <button type="submit"> Zoek!</button>
-
-
-</form>
-
-<br>
+        <div id="footer">
+            <img class="rad-logo" src="../static/img/Radboudumc-logo.jpg">
+	    </div>
+    </body>
+</html>

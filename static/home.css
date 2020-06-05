@@ -1,0 +1,139 @@
+* {
+    padding: 0px;
+    margin: 0px;
+}
+
+#header-img {
+	height:200px;
+    background: url('/static/img/genes_16x9.jpg') center no-repeat;
+	background-size: cover;
+}
+
+body {
+	background-color: rgba(245,245,245,1);
+}
+
+nav ul {
+	margin: 0;
+	padding: 0;
+	text-align: right;
+	background-color: rgba(77,174,216,1);
+}
+
+nav ul a {
+	display: block;
+	text-decoration: none;
+	font-family: "Arial";
+	font-size: 22px;
+	color: white;
+	margin: 30px 60px 30px 60px;
+    text-align: center;
+}
+
+nav ul ul a {
+	padding: 30px;
+	font-size: 22px;
+}
+
+nav ul li {
+	display: inline-block;
+	transition-duration: 0.3s;
+    width: 200px;
+}
+
+nav ul li ul li{
+	width: 200px;
+	display: block;
+}
+
+nav ul ul{
+	display: none;
+	position: absolute;
+    z-index: 1000;
+}
+
+nav ul ul a{
+	margin: 0;
+}
+
+nav ul li:hover{
+	background-color: rgba(255,255,255,1);
+}
+
+nav ul li:hover > a{
+	color: rgba(77,174,216,1);
+}
+
+nav ul li:hover > ul{
+	display: block;
+}
+
+h1 {
+	font-family: "Helvetica Neue";
+	text-align: center;
+	font-size: 40px;
+	color: rgba(0,0,0,0.71);
+	margin: 20px;
+}
+
+p {
+	font-family: "Helvetica Neue";
+	text-align: center;
+	font-size: 14px;
+	color: rgba(0,0,0,0.71);
+}
+
+.container{
+	background-color: rgba(245,245,245,1);
+	width: 65%;
+	margin: auto;
+	line-height: 22px;
+}
+
+.info-text{
+	text-align: center;
+	margin: 50px;
+	border-top-color: rgba(36,90,122,1);
+	border-top-style: solid;
+}
+
+#fix-img{
+	height:200px;
+	background: url('/static/img/lab-img.jpg') fixed center center no-repeat;
+	background-size: cover;
+}
+
+.data-form {
+    margin-bottom: 150px;
+    text-align: center;
+}
+
+.button-form {
+    padding: 5px;
+    background-color: rgba(77,174,216,1);
+    color: rgba(255,255,255,1);
+    border-width: 2px;
+    border-color: rgba(36,90,122,1);
+}
+
+.button-form:hover {
+    padding: 5px;
+    background-color: rgba(255,255,255,1);
+    color: rgba(77,174,216,1);
+    border-width: 2px;
+    border-color: rgba(36,90,122,1);
+}
+
+#footer {
+	background-color: rgba(255,255,255,1);
+	padding: 0;
+	height: 200px;
+}
+
+.rad-logo {
+	display: block;
+  	margin-left: auto;
+  	margin-right: auto;
+	padding-top: 50px;
+	width: 15%;
+}
