@@ -18,6 +18,12 @@ def homepage():
 def textminer():
     return render_template("text_miner.html")
 
+
+@app.route('/contact')
+def contact():
+    return render_template("contact.html")
+
+
 @app.route('/textminer', methods=['post'])
 def textmined():
     return render_template("text_miner.html")
@@ -39,6 +45,7 @@ def result():
     verwijder_non_gen(mogelijke_genen)
     return render_template("resultaat.html") + samenvatting
 
+
 def zoeken(zoekwoord, jaar):
     vandaag = date.today()
     vandaag = str(vandaag).replace('-', '/')
@@ -55,6 +62,7 @@ def zoeken(zoekwoord, jaar):
     aantal = results['Count']
     return results, aantal
 
+
 def details_ophalen(id_lijst):
     ids = ','.join(id_lijst)
     Entrez.email = 'example@mail.com'
@@ -63,6 +71,7 @@ def details_ophalen(id_lijst):
                            id=ids)
     results = Entrez.read(handle)
     return results
+
 
 def verkrijg_titel(publicaties, zoekwoord):
     overzicht = "<table><tr><th>zoekwoord</th><th>publicatiedatum</th><th>artikeltitel pubmed</th></tr>"
@@ -103,6 +112,7 @@ def gen_uit_abstract(abstracts):
     print(genen)
     return genen
 
+
 def verwijder_non_gen(mogelijke_genen):
     geen_gen = ["OMIM", "DNA", "CONCLUSION", "AND", "AIM", "THE", "STUDY", "TRIAL", "PURPOSE", "METHOD", "RESULTS",
                 "METHODS", "CLINICAL", "CASE", "RELEVANCE", "OBJECTIVE"]
@@ -111,6 +121,7 @@ def verwijder_non_gen(mogelijke_genen):
             if gen in geen_gen:
                 artikel.remove(gen)
     print(mogelijke_genen)
+
 
 @app.route('/parameters', methods=['get', 'post'])
 def parameters():
