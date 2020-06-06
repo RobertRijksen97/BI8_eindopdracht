@@ -43,7 +43,7 @@ def result():
     samenvatting, abstracts = verkrijg_titel(details, zoekwoord)
     mogelijke_genen = gen_uit_abstract(abstracts)
     verwijder_non_gen(mogelijke_genen)
-    return render_template("resultaat.html") + samenvatting
+    return render_template("resultaat.html", samenvatting=resultaat)
 
 
 def zoeken(zoekwoord, jaar):
