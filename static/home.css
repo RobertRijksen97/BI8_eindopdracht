@@ -124,6 +124,10 @@ p {
     border-color: rgba(36,90,122,1);
 }
 
+.resultaat {
+	height: 600px;
+}
+
 #footer {
 	background-color: rgba(255,255,255,1);
 	padding: 0;
