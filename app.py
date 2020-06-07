@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request
-from Bio import Entrez
-from datetime import date
-import re
+import os
+import json
 
 app = Flask(__name__)
 
@@ -31,96 +30,19 @@ def textmined():
 
 @app.route('/resultaat', methods=['get', 'post'])
 def result():
+    result = "<table><tr><th>searchterm</th><th>PMC code</th><th>Genes</th></tr>"
     zoekwoord = request.form["woord"]
-    try:
-        jaar = request.form["jaar"]
-        jaar = jaar + '/01/01'
-    except:
-        jaar = "0/0/0"
-    gezocht, aantal = zoeken(zoekwoord, jaar)
-    id_lijst = gezocht['IdList']
-    details = details_ophalen(id_lijst)
-    samenvatting, abstracts = verkrijg_titel(details, zoekwoord)
-    mogelijke_genen = gen_uit_abstract(abstracts)
-    verwijder_non_gen(mogelijke_genen)
-    return render_template("resultaat.html", samenvatting=resultaat)
-
-
-def zoeken(zoekwoord, jaar):
-    vandaag = date.today()
-    vandaag = str(vandaag).replace('-', '/')
-    Entrez.email = 'example@mail.com'
-    handle = Entrez.esearch(db='pubmed',
-                            sort='relevance',
-                            retmode='xml',
-                            retmax=30,
-                            mindate=jaar,
-                            maxdate=vandaag,
-                            term=zoekwoord)
-    results = Entrez.read(handle)
-    #print(results)
-    aantal = results['Count']
-    return results, aantal
-
-
-def details_ophalen(id_lijst):
-    ids = ','.join(id_lijst)
-    Entrez.email = 'example@mail.com'
-    handle = Entrez.efetch(db='pubmed',
-                           retmode='xml',
-                           id=ids)
-    results = Entrez.read(handle)
-    return results
-
-
-def verkrijg_titel(publicaties, zoekwoord):
-    overzicht = "<table><tr><th>zoekwoord</th><th>publicatiedatum</th><th>artikeltitel pubmed</th></tr>"
-    abstracts = ""
-    for i, paper in enumerate(publicaties['PubmedArticle']):
-        try:
-            year = int(paper['MedlineCitation']['Article']['Journal']['JournalIssue']['PubDate']['Year'])
-            artikel = (paper['MedlineCitation']['Article']["ArticleTitle"])
-            abstract = (paper['MedlineCitation']['Article']["Abstract"]["AbstractText"])
-            overzicht = overzicht + "<tr><td>" + zoekwoord +"</td>" + "<td>" + str(year) + "</td><td>" + str(artikel)\
-                        + "</td></tr>"
-            abstracts = abstracts + str(abstract) + "\n"
-        except:
-            pass
-    overzicht = overzicht + "</table>"
-    return overzicht, abstracts
-
-
-def gen_uit_abstract(abstracts):
-    genen = []
-    abstracts = abstracts.split('\n')
-    for abstract in abstracts:
-        abstract = abstract.split(' ')
-        #print(abstract)
-        gen_per_artikel = []
-        for word in abstract:
-            gen = re.sub('[\W_]+', '', word)
-            if len(gen) > 2 and len(gen) < 10 and gen not in gen_per_artikel and not gen.startswith('p'):
-                if gen.isalpha():
-                    if gen.isupper():
-                        #print(gen)
-                        gen_per_artikel.append(gen)
-                elif re.search(r'\d', word):
-                    if not gen.isdigit():
-                        #print(gen)
-                        gen_per_artikel.append(gen)
-        genen.append(gen_per_artikel)
-    print(genen)
-    return genen
-
-
-def verwijder_non_gen(mogelijke_genen):
-    geen_gen = ["OMIM", "DNA", "CONCLUSION", "AND", "AIM", "THE", "STUDY", "TRIAL", "PURPOSE", "METHOD", "RESULTS",
-                "METHODS", "CLINICAL", "CASE", "RELEVANCE", "OBJECTIVE"]
-    for artikel in mogelijke_genen:
-        for gen in artikel:
-            if gen in geen_gen:
-                artikel.remove(gen)
-    print(mogelijke_genen)
+    zoekwoord = zoekwoord.lower()
+    with open("data.json",  'r') as file:
+        data = file.read()
+    obj = json.loads(data)
+    for article in obj:
+        for item in article["Article"]:
+            if zoekwoord in item["diseases"]:
+                result = result + "<tr><td>" + zoekwoord + "</td><tr>" + item["PMC"] + "</td><td>" + str(item["genes"]) + "</td></tr>"
+    result = result + "</table>"
+    return render_template("resultaat.html") + result + "<div id='footer'><img class='rad-logo' src='../static/img/Radboudumc-logo.jpg'>" \
+                                                        "</div></body></html>"
 
 
 @app.route('/parameters', methods=['get', 'post'])
