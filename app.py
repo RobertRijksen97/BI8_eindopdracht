@@ -31,7 +31,8 @@ def textmined():
 @app.route('/resultaat', methods=['get', 'post'])
 def result():
     dict, zoekwoord = create_dict()
-    result = tabel(dict, zoekwoord)
+    gennamen = genpanel_inlezen()
+    result = tabel(dict, zoekwoord, gennamen)
     return render_template("resultaat.html", resultaat=Markup(result))
 
 
@@ -44,22 +45,47 @@ def create_dict():
     dict = {}
     for article in obj:
         for item in article["Article"]:
-            if zoekwoord in item["diseases"]:
-                try:
-                    if item["PMC"] in dict.keys():
-                        dict[item["PMC"]] += item["genes"]
-                    else:
-                        dict[item["PMC"]] = item["genes"]
-                except:
-                    print("exception")
+            if zoekwoord in item["diseases"] and request.form["gen"] == "":
+               toevoegen_dict(item, dict)
+            elif zoekwoord in item["diseases"] and request.form["gen"] != "":
+                if request.form["gen"] in item["genes"]:
+                    toevoegen_dict(item, dict)
     return dict, zoekwoord
 
-def tabel(dict, zoekwoord):
-    result = "<table><tr><th>searchterm</th><th>PMC code</th><th>Genes</th></tr>"
-    for key,values in dict.items():
-        result = result + "<tr><td>" + zoekwoord + "</td><td>" + key + "</td><td>" + str(values) + "</td></tr>"
+def toevoegen_dict(item, dict):
+    try:
+        if item["PMC"] in dict.keys():
+            dict[item["PMC"]] += item["genes"]
+        else:
+            dict[item["PMC"]] = item["genes"]
+    except:
+        print("exception")
 
-    # result = result + "<tr><td>" + zoekwoord + "</td><td>" + item["PMC"] + "</td><td>" + str(item["genes"]) + "</td></tr>"
+def genpanel_inlezen():
+    file = open("GenPanels_merged_DG-2.17.0.txt")
+    gennamen = []
+    for regel in file:
+        if regel.startswith("Symbol_HGNC"):
+            print("Dit zijn alle genen: ")
+        else:
+            genpanel = regel.split("\t")
+            gennaam = genpanel[0]
+            gennamen.append(gennaam)
+    return gennamen
+
+def tabel(dict, zoekwoord, gennamen):
+    result = "<table><tr><th>searchterm</th><th>PMC code</th><th>Genes</th><th>Gevonden in genpanellijst</td></tr>"
+    for key,values in dict.items():
+        for value in values:
+            gevonden = []
+            if value in gennamen:
+                gevonden.append(value)
+        try:
+            result = result + "<tr><td>" + zoekwoord + "</td><td>" + key + "</td><td>" + str(values) + "</td><td>" + str(gevonden) + "</td></tr>"
+        except:
+            gevonden = ""
+            result = result + "<tr><td>" + zoekwoord + "</td><td>" + key + "</td><td>" + str(
+                values) + "</td><td>" + gevonden + "</td></tr>"
     result = result + "</table>"
     return result
 

@@ -30,27 +30,16 @@
 
             <form class="data-form" method="post" action="/resultaat">
                 <label>
-                    <input list="MultiSelect" name="categorie">
-                </label>
-                <select id="multiSelect" multiple="multiple">
-                    <option value="Gene1">Gene1</option>
-                    <option value="Gene2">Gene2</option>
-                    <option value="Gene3">Gene3</option>
-                    <option value="Gene4">Gene4</option>
-                </select>
-                <label>
                     <input name="woord" type="text" placeholder="Voer zoekwoord in"/>
                 </label>
                 <label>
-                    <input name="jaar" type="text" placeholder="Voer jaartal in"/>
+                    <input name="gen" type="text" placeholder="Voer gen in"/>
                 </label>
                 <br>
                 <br>
-                <button class="button-form" type="submit" formaction="/textminer"> +Parameters</button>
                 <button class="button-form" type="submit"> Zoek!</button>
             </form>
             <br>
-            <script src="multiselect.min.js"></script>
         </div>
 
         <div id="footer">

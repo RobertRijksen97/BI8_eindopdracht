@@ -30,18 +30,11 @@
 
             <form class="data-form" method="post" action="/resultaat">
                 <label>
-                    <input list="categorien" name="categorie">
-                </label>
-                <datalist id="categorien">
-                    <option value="Gene1">Gene1</option>
-                    <option value="Gene2">Gene2</option>
-                    <option value="Gene3">Gene3</option>
-                    <option value="Gene4">Gene4</option>
-                </datalist>
-                <label>
                     <input name="woord" type="text" placeholder="Voer zoekwoord in"/>
                 </label>
-                <button class="button-form" type="submit" formaction="/parameters"> +Parameters</button>
+                <label>
+                    <input name="gen" type="text" placeholder="Voer gen in"/>
+                </label>
                 <button class="button-form" type="submit" formaction="/textminer"> Reset</button>
             </form>
         </div>
