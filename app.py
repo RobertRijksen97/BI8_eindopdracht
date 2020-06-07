@@ -74,7 +74,7 @@ def genpanel_inlezen():
     return gennamen
 
 def tabel(dict, zoekwoord, gennamen):
-    result = "<table><tr><th>searchterm</th><th>PMC code</th><th>Genes</th><th>Gevonden in genpanellijst</td></tr>"
+    result = "<table><tr><th>Searchterm</th><th>PMC code</th><th>Genes</th><th>Gevonden in genpanellijst</td></tr>"
     for key,values in dict.items():
         for value in values:
             gevonden = []

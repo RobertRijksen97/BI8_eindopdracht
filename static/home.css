@@ -104,7 +104,7 @@ p {
 }
 
 .data-form {
-    margin-bottom: 150px;
+    margin-bottom: 100px;
     text-align: center;
 }
 
@@ -125,8 +125,28 @@ p {
     border-color: rgba(36,90,122,1);
 }
 
-.resultaat {
-	height: 600px;
+table {
+    background-color: rgba(255,255,255,1);
+	margin: auto;
+	margin-bottom: 100px;
+	width: 100%;
+}
+
+tbody tr:nth-child(1) {
+	background-color: rgba(77,174,216,1);
+}
+
+tr:nth-child(odd) {
+	background-color: rgba(36,90,122,0.1);
+}
+
+th {
+	padding: 20px;
+	color: rgba(255,255,255,1);
+}
+
+td {
+	padding: 20px;
 }
 
 .mapouter {
@@ -144,7 +164,6 @@ p {
 	width: 1080px;
 }
 
-
 #footer {
 	background-color: rgba(255,255,255,1);
 	padding: 0;
@@ -158,3 +177,4 @@ p {
 	padding-top: 50px;
 	width: 15%;
 }
+
