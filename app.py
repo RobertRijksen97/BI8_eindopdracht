@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, Markup
 import os
 import json
 
@@ -39,10 +39,9 @@ def result():
     for article in obj:
         for item in article["Article"]:
             if zoekwoord in item["diseases"]:
-                result = result + "<tr><td>" + zoekwoord + "</td><tr>" + item["PMC"] + "</td><td>" + str(item["genes"]) + "</td></tr>"
+                result = result + "<tr><td>" + zoekwoord + "</td><td>" + item["PMC"] + "</td><td>" + str(item["genes"]) + "</td></tr>"
     result = result + "</table>"
-    return render_template("resultaat.html") + result + "<div id='footer'><img class='rad-logo' src='../static/img/Radboudumc-logo.jpg'>" \
-                                                        "</div></body></html>"
+    return render_template("resultaat.html", resultaat=Markup(result))
 
 
 @app.route('/parameters', methods=['get', 'post'])
