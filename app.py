@@ -82,14 +82,20 @@ def tabel(dict, zoekwoord, gennamen):
                 gevonden.append(value)
         try:
             result = result + "<tr><td>" + zoekwoord + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}'</a>".format(key) + key +\
-                     "</td><td>" + str(values) + "</td><td>" + str(gevonden) + "</td></tr>"
+                     "</td><td>" + printer(values) + "</td><td>" + printer(gevonden) + "</td></tr>"
         except:
             gevonden = ""
             result = result + "<tr><td>" + zoekwoord + "</td><td>" + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}'</a>".format(key) + key + \
-                     "</td><td>" + str(values) + "</td><td>" + gevonden + "</td></tr>"
+                     "</td><td>" + printer(values) + "</td><td>" + printer(gevonden) + "</td></tr>"
     result = result + "</table>"
     return result
 
+
+def printer(values):
+    string_builder = ''
+    for i in values:
+        string_builder = string_builder + i + ', '
+    return string_builder[:-2]
 
 
 @app.route('/parameters', methods=['get', 'post'])
