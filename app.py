@@ -94,8 +94,11 @@ def toevoegen_dict(item, dict):
     try:
         if item["PMC"] in dict.keys():
             dict[item["PMC"]] += item["genes"]
+            dict[item["PMC"]] = sorted(dict[item["PMC"]], key=str.casefold)
         else:
             dict[item["PMC"]] = item["genes"]
+            dict[item["PMC"]] = sorted(dict[item["PMC"]], key=str.casefold)
+
     except:
         print("exception")
 
