@@ -104,7 +104,7 @@ def tabel(dict, zoekwoord, gennamen, gene_or_disease):
 
 
 def filter_genes(genes):
-    no_genes = ['receptor', 'protein', 'enzyme', 'enzym', 'hormone', 'insulin', 'antigen']
+    no_genes = ['receptor', 'protein', 'enzyme', 'enzym', 'hormone', 'insulin', 'antigen', 'ase']
     filtered_genes = []
     for gen in genes:
         if gen.count(' ') > 4:
