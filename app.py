@@ -48,22 +48,31 @@ def create_dict():
     dict = {}
     g = get_gene_list(gen)
     genes = get_synonyms(g)
-    for gen in genes:
-        for article in obj:
-            for item in article["Article"]:
-                if zoekwoord in item["diseases"] and gen == "":
-                   toevoegen_dict(item, dict)
-                elif zoekwoord in item["diseases"] and gen != "":
-                    if gen.strip() in item["genes"]:
-                        toevoegen_dict(item, dict)
-                elif zoekwoord == "" and gen.strip() in item["genes"]:
-                    toevoegen_dict(item, dict)
-                    gen_or_disease = 'Gene'
+    if g == ['']:
+        gen_or_disease, dict = resulting(obj, zoekwoord, gen, gen_or_disease, dict)
+    else:
+        for gen in genes:
+            gen_or_disease, dict = resulting(obj, zoekwoord, gen, gen_or_disease, dict)
 
     if gen_or_disease == 'Gene':
         zoekwoord = ','.join(g)
 
     return dict, zoekwoord, gen_or_disease
+
+
+def resulting(obj, zoekwoord, gen, gen_or_disease, dict):
+    for article in obj:
+        for item in article["Article"]:
+            if zoekwoord in item["diseases"] and gen == "":
+                toevoegen_dict(item, dict)
+            elif zoekwoord in item["diseases"] and gen != "":
+                if gen.strip() in item["genes"]:
+                    toevoegen_dict(item, dict)
+            elif zoekwoord == "" and gen.strip() in item["genes"]:
+                toevoegen_dict(item, dict)
+                gen_or_disease = 'Gene'
+
+    return gen_or_disease, dict
 
 
 def get_gene_list(gen):
