@@ -5,6 +5,7 @@ import json
 app = Flask(__name__)
 
 
+
 @app.route('/', methods=['get', 'post'])
 def homepage():
     """Deze functie runt de app
@@ -75,17 +76,17 @@ def get_gene_list(gen):
 
 def get_synonyms(genes):
     list_gene = []
-
     with open("gene.json", 'r') as file:
         data = file.read()
     obj = json.loads(data)
-
     for gene in genes:
         for value in obj:
             for k, v in value.items():
                 for i in v:
-                    if gene.strip() in i:
+                    if gene.strip() == i.strip():
                         list_gene = list_gene + v
+    if len(list_gene) == 0:
+        return genes
     return list_gene
 
 
@@ -113,55 +114,42 @@ def genpanel_inlezen():
 
 
 def tabel(dict, zoekwoord, gennamen, gene_or_disease):
-    result = f"<table><tr><th>{gene_or_disease}</th><th>PMC code</th>" \
-             f"<th>Genes</th><th>Gevonden in " \
-             f"genpanellijst</td></tr>"
+    result = f"<table><tr><th>{gene_or_disease}</th><th>PMC code</th><th>Genes</th><th>Gevonden in genpanellijst</td></tr>"
     for key, values in dict.items():
         gevonden = find_in_genpanel(values, gennamen)
 
         try:
             filtered_values = filter_genes(values)
-            result = result + "<tr><td>" + zoekwoord + \
-                     "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}'" \
-                     "target='_blank'>".format(key) + key +\
-                     "</td><td>" + printer(filtered_values) + \
-                     "</td><td>" + printer(gevonden) + "</td></tr>"
+            result = result + "<tr><td>" + zoekwoord + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}' target='_blank'>".format(key) + key +\
+                     "</td><td>" + printer(filtered_values) + "</td><td>" + printer(gevonden) + "</td></tr>"
         except:
             gevonden = ""
             filtered_values = filter_genes(values)
-            result = result + "<tr><td>" + zoekwoord + "</td><td>" + \
-                     "</td><td><a href="\
-                     "'https://www.ncbi.nlm.nih.gov/pmc/articles/{}'" \
-                     "target='_blank'>".format(key) + key + \
-                     "</td><td>" + printer(filtered_values) + "</td><td>" + \
-                     printer(gevonden) + "</td></tr>"
+            result = result + "<tr><td>" + zoekwoord + "</td><td>" + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}' target='_blank'>".format(key) + key + \
+                     "</td><td>" + printer(filtered_values) + "</td><td>" + printer(gevonden) + "</td></tr>"
 
     result = result + "</table>"
     return result
 
 
+def find_in_genpanel(values, gennamen):
+    gevonden = []
+    for value in values:
+        if value in gennamen:
+            gevonden.append(value)
+    return gevonden
+
+
 def filter_genes(genes):
-    no_genes = ['receptor', 'protein', 'enzyme', 'enzym',
-                'hormone', 'insulin', 'antigen', 'ase', 'mir', 'rna']
+    no_genes = ['receptor', 'protein', 'enzyme', 'enzym', 'hormone', 'insulin', 'antigen', 'ase', 'mir', 'rna']
     filtered_genes = []
     for gen in genes:
-        if gen.count(' ') > 3:
+        if gen.count(' ') > 2:
             pass
         else:
             if not any(ext in gen.lower() for ext in no_genes):
                 filtered_genes.append(gen)
     return filtered_genes
-
-
-def find_in_genpanel(values, gennamen):
-    gevonden = []
-    for value in values:
-        print(value)
-        print(values)
-        if value in gennamen:
-            gevonden.append(value)
-    return gevonden
-
 
 def printer(values):
     string_builder = ''
@@ -177,3 +165,4 @@ def parameters():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
