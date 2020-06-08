@@ -28,16 +28,15 @@
                 <p>Klik daarna op zoek voor de resultaten.</p>
                 <p>Klik vervolgens op reset om opnieuw te kunnen zoeken.</p>
             </div>
-
-            <form class="data-form" method="post" action="/resultaat">
+		<form class="data-form" method="post" action="/resultaat">
                 <label>
                     <input name="woord" type="text" placeholder="Voer zoekwoord in"/>
                 </label>
                 <label>
                     <input name="gen" type="text" placeholder="Voer gen in"/>
                 </label>
-                <button class="button-form" type="submit" formaction="/textminer"> Reset</button>
-            </form>
+                <button class="button-form" type="submit">Zoek</button>
+		</form>
         </div>
 
         <div class="resultaat">{{ resultaat }}</div>
