@@ -45,6 +45,8 @@ def create_dict():
         data = file.read()
     obj = json.loads(data)
     dict = {}
+    g = get_gene_list(gen)
+    genes = get_synonyms(g)
     for article in obj:
         for item in article["Article"]:
             if zoekwoord in item["diseases"] and gen == "":
@@ -60,6 +62,30 @@ def create_dict():
         zoekwoord = gen
 
     return dict, zoekwoord, gen_or_disease
+
+
+def get_gene_list(gen):
+    if ',' in gen:
+        genes = gen.split(',')
+    else:
+        genes = [gen]
+    return genes
+
+
+def get_synonyms(genes):
+    list_gene = []
+
+    with open("gene.json", 'r') as file:
+        data = file.read()
+    obj = json.loads(data)
+
+    for gene in genes:
+        for value in obj:
+            for k, v in value.items():
+                for i in v:
+                    if gene.strip() in i:
+                        list_gene = list_gene + v
+    return list_gene
 
 
 def toevoegen_dict(item, dict):
