@@ -107,7 +107,7 @@ def filter_genes(genes):
     no_genes = ['receptor', 'protein', 'enzyme', 'enzym', 'hormone', 'insulin', 'antigen']
     filtered_genes = []
     for gen in genes:
-        if gen.count(' ') > 4:
+        if gen.count(' ') > 2:
             pass
         else:
             if not any(ext in gen.lower() for ext in no_genes):
