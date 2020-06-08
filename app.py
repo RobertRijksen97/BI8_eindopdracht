@@ -40,22 +40,27 @@ def create_dict():
     zoekwoord = request.form["woord"]
     zoekwoord = zoekwoord.lower()
     gen = request.form["gen"]
-
+    gen_or_disease = 'Disease'
     with open("pmc_twee.json", 'r') as file:
         data = file.read()
     obj = json.loads(data)
     dict = {}
     for article in obj:
         for item in article["Article"]:
-            if zoekwoord in item["diseases"] and request.form["gen"] == "":
+            if zoekwoord in item["diseases"] and gen == "":
                toevoegen_dict(item, dict)
-            elif zoekwoord in item["diseases"] and request.form["gen"] != "":
+            elif zoekwoord in item["diseases"] and gen != "":
                 if request.form["gen"] in item["genes"]:
                     toevoegen_dict(item, dict)
             elif zoekwoord == "" and gen in item["genes"]:
                 toevoegen_dict(item, dict)
-                
-    return dict, zoekwoord
+                gen_or_disease = 'Gene'
+
+    if gen_or_disease == 'Gene':
+        zoekwoord = gen
+
+    return dict, zoekwoord, gen_or_disease
+
 
 def toevoegen_dict(item, dict):
     try:
@@ -79,20 +84,20 @@ def genpanel_inlezen():
     return gennamen
 
 
-def tabel(dict, zoekwoord, gennamen):
-    result = "<table><tr><th>Searchterm</th><th>PMC code</th><th>Genes</th><th>Gevonden in genpanellijst</td></tr>"
-    for key,values in dict.items():
+def tabel(dict, zoekwoord, gennamen, gene_or_disease):
+    result = f"<table><tr><th>{gene_or_disease}</th><th>PMC code</th><th>Genes</th><th>Gevonden in genpanellijst</td></tr>"
+    for key, values in dict.items():
         gevonden = find_in_genpanel(values, gennamen)
         try:
-            result = result + "<tr><td>" + zoekwoord + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}' target='_blank'>".format(key) + key +\
+            result = result + "<tr><td>" + zoekwoord + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}'</a>".format(key) + key +\
                      "</td><td>" + printer(values) + "</td><td>" + printer(gevonden) + "</td></tr>"
         except:
             gevonden = ""
-            result = result + "<tr><td>" + zoekwoord + "</td><td>" + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}' target='_blank'>".format(key) + key + \
+            result = result + "<tr><td>" + zoekwoord + "</td><td>" + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}'</a>".format(key) + key + \
                      "</td><td>" + printer(values) + "</td><td>" + printer(gevonden) + "</td></tr>"
+
     result = result + "</table>"
     return result
-
 
 
 def find_in_genpanel(values, gennamen):
