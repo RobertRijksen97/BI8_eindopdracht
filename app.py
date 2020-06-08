@@ -82,10 +82,7 @@ def genpanel_inlezen():
 def tabel(dict, zoekwoord, gennamen):
     result = "<table><tr><th>Searchterm</th><th>PMC code</th><th>Genes</th><th>Gevonden in genpanellijst</td></tr>"
     for key,values in dict.items():
-        for value in values:
-            gevonden = []
-            if value in gennamen:
-                gevonden.append(value)
+        gevonden = find_in_genpanel(values, gennamen)
         try:
             result = result + "<tr><td>" + zoekwoord + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}' target='_blank'>".format(key) + key +\
                      "</td><td>" + printer(values) + "</td><td>" + printer(gevonden) + "</td></tr>"
@@ -95,6 +92,17 @@ def tabel(dict, zoekwoord, gennamen):
                      "</td><td>" + printer(values) + "</td><td>" + printer(gevonden) + "</td></tr>"
     result = result + "</table>"
     return result
+
+
+
+def find_in_genpanel(values, gennamen):
+    gevonden = []
+    for value in values:
+        print(value)
+        print(values)
+        if value in gennamen:
+            gevonden.append(value)
+    return gevonden
 
 
 def printer(values):
