@@ -30,9 +30,9 @@ def textmined():
 
 @app.route('/resultaat', methods=['get', 'post'])
 def result():
-    dict, zoekwoord = create_dict()
+    dict, zoekwoord, gen_or_disease = create_dict()
     gennamen = genpanel_inlezen()
-    result = tabel(dict, zoekwoord, gennamen)
+    result = tabel(dict, zoekwoord, gennamen, gen_or_disease)
     return render_template("resultaat.html", resultaat=Markup(result))
 
 
@@ -40,22 +40,27 @@ def create_dict():
     zoekwoord = request.form["woord"]
     zoekwoord = zoekwoord.lower()
     gen = request.form["gen"]
-
+    gen_or_disease = 'Disease'
     with open("pmc_twee.json", 'r') as file:
         data = file.read()
     obj = json.loads(data)
     dict = {}
     for article in obj:
         for item in article["Article"]:
-            if zoekwoord in item["diseases"] and request.form["gen"] == "":
+            if zoekwoord in item["diseases"] and gen == "":
                toevoegen_dict(item, dict)
-            elif zoekwoord in item["diseases"] and request.form["gen"] != "":
+            elif zoekwoord in item["diseases"] and gen != "":
                 if request.form["gen"] in item["genes"]:
                     toevoegen_dict(item, dict)
             elif zoekwoord == "" and gen in item["genes"]:
                 toevoegen_dict(item, dict)
-                
-    return dict, zoekwoord
+                gen_or_disease = 'Gene'
+
+    if gen_or_disease == 'Gene':
+        zoekwoord = gen
+
+    return dict, zoekwoord, gen_or_disease
+
 
 def toevoegen_dict(item, dict):
     try:
@@ -79,22 +84,45 @@ def genpanel_inlezen():
     return gennamen
 
 
-def tabel(dict, zoekwoord, gennamen):
-    result = "<table><tr><th>Searchterm</th><th>PMC code</th><th>Genes</th><th>Gevonden in genpanellijst</td></tr>"
-    for key,values in dict.items():
-        for value in values:
-            gevonden = []
-            if value in gennamen:
-                gevonden.append(value)
+def tabel(dict, zoekwoord, gennamen, gene_or_disease):
+    result = f"<table><tr><th>{gene_or_disease}</th><th>PMC code</th><th>Genes</th><th>Gevonden in genpanellijst</td></tr>"
+    for key, values in dict.items():
+        gevonden = find_in_genpanel(values, gennamen)
+
         try:
+            filtered_values = filter_genes(values)
             result = result + "<tr><td>" + zoekwoord + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}' target='_blank'>".format(key) + key +\
-                     "</td><td>" + printer(values) + "</td><td>" + printer(gevonden) + "</td></tr>"
+                     "</td><td>" + printer(filtered_values) + "</td><td>" + printer(gevonden) + "</td></tr>"
         except:
             gevonden = ""
+            filtered_values = filter_genes(values)
             result = result + "<tr><td>" + zoekwoord + "</td><td>" + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}' target='_blank'>".format(key) + key + \
-                     "</td><td>" + printer(values) + "</td><td>" + printer(gevonden) + "</td></tr>"
+                     "</td><td>" + printer(filtered_values) + "</td><td>" + printer(gevonden) + "</td></tr>"
+
     result = result + "</table>"
     return result
+
+
+def filter_genes(genes):
+    no_genes = ['receptor', 'protein', 'enzyme', 'enzym', 'hormone', 'insulin', 'antigen']
+    filtered_genes = []
+    for gen in genes:
+        if gen.count(' ') > 4:
+            pass
+        else:
+            if not any(ext in gen.lower() for ext in no_genes):
+                filtered_genes.append(gen)
+    return filtered_genes
+
+
+def find_in_genpanel(values, gennamen):
+    gevonden = []
+    for value in values:
+        print(value)
+        print(values)
+        if value in gennamen:
+            gevonden.append(value)
+    return gevonden
 
 
 def printer(values):
