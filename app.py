@@ -88,17 +88,31 @@ def tabel(dict, zoekwoord, gennamen, gene_or_disease):
     result = f"<table><tr><th>{gene_or_disease}</th><th>PMC code</th><th>Genes</th><th>Gevonden in genpanellijst</td></tr>"
     for key, values in dict.items():
         gevonden = find_in_genpanel(values, gennamen)
+
         try:
+            filtered_values = filter_genes(values)
             result = result + "<tr><td>" + zoekwoord + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}' target='_blank'>".format(key) + key +\
-                     "</td><td>" + printer(values) + "</td><td>" + printer(gevonden) + "</td></tr>"
+                     "</td><td>" + printer(filtered_values) + "</td><td>" + printer(gevonden) + "</td></tr>"
         except:
             gevonden = ""
+            filtered_values = filter_genes(values)
             result = result + "<tr><td>" + zoekwoord + "</td><td>" + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}' target='_blank'>".format(key) + key + \
-                     "</td><td>" + printer(values) + "</td><td>" + printer(gevonden) + "</td></tr>"
-
+                     "</td><td>" + printer(filtered_values) + "</td><td>" + printer(gevonden) + "</td></tr>"
 
     result = result + "</table>"
     return result
+
+
+def filter_genes(genes):
+    no_genes = ['receptor', 'protein', 'enzyme', 'enzym', 'hormone', 'insulin', 'antigen']
+    filtered_genes = []
+    for gen in genes:
+        if gen.count(' ') > 4:
+            pass
+        else:
+            if not any(ext in gen.lower() for ext in no_genes):
+                filtered_genes.append(gen)
+    return filtered_genes
 
 
 def find_in_genpanel(values, gennamen):
