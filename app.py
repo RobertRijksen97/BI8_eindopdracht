@@ -39,7 +39,7 @@ def result():
 def create_dict():
     zoekwoord = request.form["woord"]
     zoekwoord = zoekwoord.lower()
-    with open("data.json", 'r') as file:
+    with open("pmc_twee.json", 'r') as file:
         data = file.read()
     obj = json.loads(data)
     dict = {}
@@ -73,6 +73,7 @@ def genpanel_inlezen():
             gennamen.append(gennaam)
     return gennamen
 
+
 def tabel(dict, zoekwoord, gennamen):
     result = "<table><tr><th>Searchterm</th><th>PMC code</th><th>Genes</th><th>Gevonden in genpanellijst</td></tr>"
     for key,values in dict.items():
@@ -90,6 +91,12 @@ def tabel(dict, zoekwoord, gennamen):
     result = result + "</table>"
     return result
 
+
+def printer(values):
+    string_builder = ''
+    for i in values:
+        string_builder = string_builder + i + ', '
+    return string_builder[:-2]
 
 
 @app.route('/parameters', methods=['get', 'post'])
