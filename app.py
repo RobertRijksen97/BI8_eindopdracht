@@ -48,7 +48,7 @@ def create_dict():
     for article in obj:
         for item in article["Article"]:
             if zoekwoord in item["diseases"] and gen == "":
-               toevoegen_dict(item, dict)
+                toevoegen_dict(item, dict)
             elif zoekwoord in item["diseases"] and gen != "":
                 if request.form["gen"] in item["genes"]:
                     toevoegen_dict(item, dict)
@@ -71,6 +71,7 @@ def toevoegen_dict(item, dict):
     except:
         print("exception")
 
+
 def genpanel_inlezen():
     file = open("GenPanels_merged_DG-2.17.0.txt")
     gennamen = []
@@ -85,26 +86,36 @@ def genpanel_inlezen():
 
 
 def tabel(dict, zoekwoord, gennamen, gene_or_disease):
-    result = f"<table><tr><th>{gene_or_disease}</th><th>PMC code</th><th>Genes</th><th>Gevonden in genpanellijst</td></tr>"
+    result = f"<table><tr><th>{gene_or_disease}</th><th>PMC code</th>" \
+             f"<th>Genes</th><th>Gevonden in " \
+             f"genpanellijst</td></tr>"
     for key, values in dict.items():
         gevonden = find_in_genpanel(values, gennamen)
 
         try:
             filtered_values = filter_genes(values)
-            result = result + "<tr><td>" + zoekwoord + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}' target='_blank'>".format(key) + key +\
-                     "</td><td>" + printer(filtered_values) + "</td><td>" + printer(gevonden) + "</td></tr>"
+            result = result + "<tr><td>" + zoekwoord + \
+                     "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}'" \
+                     "target='_blank'>".format(key) + key +\
+                     "</td><td>" + printer(filtered_values) + \
+                     "</td><td>" + printer(gevonden) + "</td></tr>"
         except:
             gevonden = ""
             filtered_values = filter_genes(values)
-            result = result + "<tr><td>" + zoekwoord + "</td><td>" + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}' target='_blank'>".format(key) + key + \
-                     "</td><td>" + printer(filtered_values) + "</td><td>" + printer(gevonden) + "</td></tr>"
+            result = result + "<tr><td>" + zoekwoord + "</td><td>" + \
+                     "</td><td><a href="\
+                     "'https://www.ncbi.nlm.nih.gov/pmc/articles/{}'" \
+                     "target='_blank'>".format(key) + key + \
+                     "</td><td>" + printer(filtered_values) + "</td><td>" + \
+                     printer(gevonden) + "</td></tr>"
 
     result = result + "</table>"
     return result
 
 
 def filter_genes(genes):
-    no_genes = ['receptor', 'protein', 'enzyme', 'enzym', 'hormone', 'insulin', 'antigen', 'ase']
+    no_genes = ['receptor', 'protein', 'enzyme', 'enzym',
+                'hormone', 'insulin', 'antigen', 'ase']
     filtered_genes = []
     for gen in genes:
         if gen.count(' ') > 4:
