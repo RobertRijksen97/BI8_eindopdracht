@@ -47,19 +47,20 @@ def create_dict():
     dict = {}
     g = get_gene_list(gen)
     genes = get_synonyms(g)
-    for article in obj:
-        for item in article["Article"]:
-            if zoekwoord in item["diseases"] and gen == "":
-                toevoegen_dict(item, dict)
-            elif zoekwoord in item["diseases"] and gen != "":
-                if request.form["gen"] in item["genes"]:
+    for gen in genes:
+        for article in obj:
+            for item in article["Article"]:
+                if zoekwoord in item["diseases"] and gen == "":
+                   toevoegen_dict(item, dict)
+                elif zoekwoord in item["diseases"] and gen != "":
+                    if gen.strip() in item["genes"]:
+                        toevoegen_dict(item, dict)
+                elif zoekwoord == "" and gen.strip() in item["genes"]:
                     toevoegen_dict(item, dict)
-            elif zoekwoord == "" and gen in item["genes"]:
-                toevoegen_dict(item, dict)
-                gen_or_disease = 'Gene'
+                    gen_or_disease = 'Gene'
 
     if gen_or_disease == 'Gene':
-        zoekwoord = gen
+        zoekwoord = ','.join(g)
 
     return dict, zoekwoord, gen_or_disease
 
@@ -141,10 +142,10 @@ def tabel(dict, zoekwoord, gennamen, gene_or_disease):
 
 def filter_genes(genes):
     no_genes = ['receptor', 'protein', 'enzyme', 'enzym',
-                'hormone', 'insulin', 'antigen', 'ase']
+                'hormone', 'insulin', 'antigen', 'ase', 'mir', 'rna']
     filtered_genes = []
     for gen in genes:
-        if gen.count(' ') > 4:
+        if gen.count(' ') > 3:
             pass
         else:
             if not any(ext in gen.lower() for ext in no_genes):
