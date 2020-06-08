@@ -39,7 +39,7 @@ def result():
 def create_dict():
     zoekwoord = request.form["woord"]
     zoekwoord = zoekwoord.lower()
-    with open("data.json", 'r') as file:
+    with open("pmc_twee.json", 'r') as file:
         data = file.read()
     obj = json.loads(data)
     dict = {}
