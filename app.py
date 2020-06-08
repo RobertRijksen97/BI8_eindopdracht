@@ -30,9 +30,9 @@ def textmined():
 
 @app.route('/resultaat', methods=['get', 'post'])
 def result():
-    dict, zoekwoord = create_dict()
+    dict, zoekwoord, gen_or_disease = create_dict()
     gennamen = genpanel_inlezen()
-    result = tabel(dict, zoekwoord, gennamen)
+    result = tabel(dict, zoekwoord, gennamen, gen_or_disease)
     return render_template("resultaat.html", resultaat=Markup(result))
 
 
