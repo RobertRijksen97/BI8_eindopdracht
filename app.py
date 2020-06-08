@@ -81,11 +81,11 @@ def tabel(dict, zoekwoord, gennamen):
             if value in gennamen:
                 gevonden.append(value)
         try:
-            result = result + "<tr><td>" + zoekwoord + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}'</a>".format(key) + key +\
+            result = result + "<tr><td>" + zoekwoord + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}' target='_blank'>".format(key) + key +\
                      "</td><td>" + str(values) + "</td><td>" + str(gevonden) + "</td></tr>"
         except:
             gevonden = ""
-            result = result + "<tr><td>" + zoekwoord + "</td><td>" + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}'</a>".format(key) + key + \
+            result = result + "<tr><td>" + zoekwoord + "</td><td>" + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}' target='_blank'>".format(key) + key + \
                      "</td><td>" + str(values) + "</td><td>" + gevonden + "</td></tr>"
     result = result + "</table>"
     return result
