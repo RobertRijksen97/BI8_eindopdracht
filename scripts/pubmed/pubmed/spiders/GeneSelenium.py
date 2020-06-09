@@ -1,41 +1,4 @@
-import string
-
-import scrapy
-from scrapy_splash import SplashRequest
-import time
-
-from selenium.common.exceptions import WebDriverException
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium import webdriver
-# from selenium
-from twisted.internet import defer
-
-alph = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
-        'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-url = 'https://hpo.jax.org/app/browse/search?q=a&navFilter=gene'
-go = True
-
-class gene_selenium(scrapy.Spider):
-    name = 'Gene_finder_selenium'
-
-    def __init__(self):
-        super(gene_selenium, self).__init__()
-        self.driver = webdriver.Firefox(executable_path=r'///home/robert/Documents/geckodriver/geckodriver-v0.26.0-linux64/geckodriver')
-
-    def start_requests(self):
-        # for letter in alph:
-        letter = 'a'
-        url = f'https://hpo.jax.org/app/browse/search?q={letter}&navFilter=gene'
-        yield scrapy.Request(
-            url=url,
-            callback=self.parse_site)
-
-    def parse_site(self, response):
-        for item in self.getting_results(response):
-            yield item
-        # wait = WebDriverWait(self.driver, 5)# Naam: Robert Rijksen
+# Naam: Robert Rijksen
 # Datum: 2-6-2020
 # Functie: Het ophalen van alle genen + synonymen van hpo.
 
