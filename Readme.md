@@ -10,9 +10,10 @@ Om alle data op te halen zijn deze bestanden gebruikt:
 Om alle letters van het alfabet door de GeneSelenium te halen: 
 (path erna toe: BI8_eindopdracht/scripts/)
   - spider_run.py
-  
-De app.py is de gehele app. 
 
 Volgende json bestanden zijn gebruikt:
   - pmc_twee.json (Hierin staan alle bestanden die door de PubmedSpider zijn gehaald 
   - gene.json (Hierin staat een subset van alle genen + synonymen die mbv de GeneSelenium spider is verkregen
+  
+En tenslotte de gehele app: 
+  - app.py
