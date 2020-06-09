@@ -1,21 +1,31 @@
+# Naam: Robert Rijksen
+# Datum: 2-6-2020
+# Functie: Het ophalen van de diseases en genen uit een artikel van pubmed
+# dmv een PMC code van het artikel
+
 import scrapy
+
 
 class PubmedSpider(scrapy.Spider):
     name = 'pubmed'
 
-    def __init__(self, page=None, *args, **kwargs):
-        super(PubmedSpider, self).__init__(*args, **kwargs)
-        self.start_urls = [f'https://www.ncbi.nlm.nih.gov/research/pubtator-api/publications/export/biocxml?pmcids={page}']  # py36
-
     def start_requests(self):
-        for url in self.start_urls:
-            yield scrapy.Request(url, callback=self.parse)
+        """ De start_request functie haalt de url op uit het gedownloade pmc bestand.
+        """
+        with open('pmc_result_second.txt') as f:
+            for line in f:
+                self.page = line.strip('\n')
+                yield scrapy.Request\
+                    (url=f'https://www.ncbi.nlm.nih.gov/research/pubtator-api/publications/export/biocxml?pmcids='
+                         f'{self.page}', callback=self.parse)
 
     def parse(self, response):
-        print(response.url)
+        """ De functie parse haalt de scrapy.Request op en werkt met de response verder.
+        :param response:
+        """
+
         genes = []
         diseases = []
-
         for row in range(len(response.xpath('//passage/annotation/infon[@key="type"]/text()').getall())):
             if response.xpath('//passage/annotation/infon[@key="type"]/text()').getall()[row] == 'Gene':
                 if response.xpath('//passage/annotation/text/text()').getall()[row] not in genes:
@@ -24,8 +34,4 @@ class PubmedSpider(scrapy.Spider):
                 if response.xpath('//passage/annotation/text/text()').getall()[row].lower() not in diseases:
                     diseases.append(response.xpath('//passage/annotation/text/text()').getall()[row].lower())
 
-        print('LIJST MET UNIEKE GENEN \n')
-        print(genes)
-        print('LIJST MET UNIEKE DISEASES \n')
-        print(diseases)
-        return genes, diseases
+        yield {"Article": [{"PMC": self.page, "genes": genes, "diseases": diseases}]}
