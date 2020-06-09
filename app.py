@@ -1,9 +1,12 @@
+# Naam: Robert Rijksen, Maite van den Noort, Noah Scheffer en Peter Cserei
+# Datum: 9-6-2020
+# Functie: Het vinden van genen doormiddel van een zoekfunctie
+
 from flask import Flask, render_template, request, Markup
-import os
+
 import json
 
 app = Flask(__name__)
-
 
 
 @app.route('/', methods=['get', 'post'])
@@ -43,10 +46,10 @@ def result():
     """Deze functie roept de functies aan.
     :return:De resultaten pagina met een tabel met alle resultaten.
     """
-    dict, zoekwoord, gen_or_disease = create_dict()
+    dict_result, zoekwoord, gen_or_disease = create_dict()
     gennamen = genpanel_inlezen()
-    result = tabel(dict, zoekwoord, gennamen, gen_or_disease)
-    return render_template("resultaat.html", resultaat=Markup(result))
+    result_all = tabel(dict_result, zoekwoord, gennamen, gen_or_disease)
+    return render_template("resultaat.html", resultaat=Markup(result_all))
 
 
 def create_dict():
@@ -58,34 +61,34 @@ def create_dict():
     De gebruikte zoektermen worden gereturned.
     Er wordt gereturned of er ziekte of gen door de gebruiker is ingevuld.
     """
-    zoekwoord = request.form["woord"]       # Verkrijg de klinische zoekterm.
+    zoekwoord = request.form["woord"]  # Verkrijg de klinische zoekterm.
     zoekwoord = zoekwoord.lower()
-    gen = request.form["gen"]       # Verkrijg de genen/het gen.
+    gen = request.form["gen"]  # Verkrijg de genen/het gen.
     gen_or_disease = 'Disease'
     with open("pmc_twee.json", 'r') as file:
         data = file.read()
     obj = json.loads(data)
-    dict = {}
+    dict_results = {}
     g = get_gene_list(gen)
-    genes = get_synonyms(g)     # Verkrijg synoniemen van genen.
+    genes = get_synonyms(g)  # Verkrijg synoniemen van genen.
     if g == ['']:
-        gen_or_disease, dict = resulting(obj, zoekwoord, gen, gen_or_disease, dict)
+        gen_or_disease, dict_results = resulting(obj, zoekwoord, gen, gen_or_disease, dict_results)
     else:
-        for gen in genes:       # Uitvoeren als er meerdere genen zijn ingevuld.
-            gen_or_disease, dict = resulting(obj, zoekwoord, gen, gen_or_disease, dict)
+        for gen in genes:  # Uitvoeren als er meerdere genen zijn ingevuld.
+            gen_or_disease, dict_results = resulting(obj, zoekwoord, gen, gen_or_disease, dict_results)
     if gen_or_disease == 'Gene':
         zoekwoord = ','.join(g)
-    return dict, zoekwoord, gen_or_disease
+    return dict_results, zoekwoord, gen_or_disease
 
 
-def resulting(obj, zoekwoord, gen, gen_or_disease, dict):
+def resulting(obj, zoekwoord, gen, gen_or_disease, dict_results):
     """Voor elk artikel wordt er gekeken of de zoektermen
     overeenkomen met inhoud van het artikel.
     :param obj: Het bestand dat wordt gebruikt.
     :param zoekwoord: Het zoekwoord ingevuld door de gebruiker.
     :param gen: Het gen ingevuld door de gebruiker.
     :param gen_or_disease: Of de gebruiker een gen of een ziekte heeft ingevuld.
-    :param dict: Bevat de PMC en de genen die zijn gevonden.
+    :param dict_results: Bevat de PMC en de genen die zijn gevonden.
     :return: Of de gebruiker een gen of ziekte heeft ingevuld.
     :return: De dictionary met PMC en genen.
     """
@@ -93,16 +96,16 @@ def resulting(obj, zoekwoord, gen, gen_or_disease, dict):
         for item in article["Article"]:
             # Voer uit als ziekte is ingevuld, maar gen niet.
             if zoekwoord in item["diseases"] and gen == "":
-                toevoegen_dict(item, dict)
+                toevoegen_dict(item, dict_results)
             # Voer uit als zoekterm en gen zijn ingevuld.
             elif zoekwoord in item["diseases"] and gen != "":
                 if gen.strip() in item["genes"]:
-                    toevoegen_dict(item, dict)
+                    toevoegen_dict(item, dict_results)
             # Voer uit als zoekwoord leeg is, maar gen is ingevuld.
             elif zoekwoord == "" and gen.strip() in item["genes"]:
-                toevoegen_dict(item, dict)
+                toevoegen_dict(item, dict_results)
                 gen_or_disease = 'Gene'
-    return gen_or_disease, dict
+    return gen_or_disease, dict_results
 
 
 def get_gene_list(gen):
@@ -140,19 +143,19 @@ def get_synonyms(genes):
     return list_gene
 
 
-def toevoegen_dict(item, dict):
+def toevoegen_dict(item, dict_result):
     """Voeg PMC aan dictionary toe met bijbehorende genen.
     :param item: Daarvan worden de genen toegevoegd.
-    :param dict: Gebruikt om de PMC en genen te bewaren.
+    :param dict_result: Gebruikt om de PMC en genen te bewaren.
     :return: Niks
     """
     try:
-        if item["PMC"] in dict.keys():
-            dict[item["PMC"]] += item["genes"]      # Update genen in dictionary.
-            dict[item["PMC"]] = sorted(dict[item["PMC"]], key=str.casefold)
+        if item["PMC"] in dict_result.keys():
+            dict_result[item["PMC"]] += item["genes"]  # Update genen in dictionary.
+            dict_result[item["PMC"]] = sorted(dict_result[item["PMC"]], key=str.casefold)
         else:
-            dict[item["PMC"]] = item["genes"]       # Voeg genen toe aan dictionary.
-            dict[item["PMC"]] = sorted(dict[item["PMC"]], key=str.casefold)
+            dict_result[item["PMC"]] = item["genes"]  # Voeg genen toe aan dictionary.
+            dict_result[item["PMC"]] = sorted(dict_result[item["PMC"]], key=str.casefold)
 
     except:
         print("exception")
@@ -170,7 +173,7 @@ def genpanel_inlezen():
             print("Dit zijn alle genen: ")
         else:
             genpanel = regel.split("\t")
-            gennaam = genpanel[0]       # Hier staat de gennaam.
+            gennaam = genpanel[0]  # Hier staat de gennaam.
             gennamen.append(gennaam)
     return gennamen
 
@@ -184,21 +187,24 @@ def tabel(dict, zoekwoord, gennamen, gene_or_disease):
     :param gene_or_disease: Of de gebruiker een gen of ziekte heeft ingevuld.
     :return: Een tabel met zoekterm, genen en pmc codes.
     """
-    result = f"<table><tr><th>{gene_or_disease}</th><th>PMC code</th><th>Genes</th><th>Gevonden in genpanellijst</td></tr>"
+    results_all = f"<table><tr><th>{gene_or_disease}" \
+                  f"</th><th>PMC code</th><th>Genes</th><th>Gevonden in genpanellijst</td></tr>"
     for key, values in dict.items():
         gevonden = find_in_genpanel(values, gennamen)
         try:
             filtered_values = filter_genes(values)
-            result = result + "<tr><td>" + zoekwoord + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}' target='_blank'>".format(key) + key +\
-                     "</td><td>" + printer(filtered_values) + "</td><td>" + printer(gevonden) + "</td></tr>"
+            results_all = results_all + "<tr><td>" + zoekwoord + \
+                          f"</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{key}' target='_blank'>" + \
+                          key + "</td><td>" + printer(filtered_values) + "</td><td>" + printer(gevonden) + "</td></tr>"
         except:
             gevonden = ""
             filtered_values = filter_genes(values)
-            result = result + "<tr><td>" + zoekwoord + "</td><td>" + "</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{}' target='_blank'>".format(key) + key + \
-                     "</td><td>" + printer(filtered_values) + "</td><td>" + printer(gevonden) + "</td></tr>"
+            results_all = results_all + "<tr><td>" + zoekwoord + "</td><td>" + \
+                          f"</td><td><a href='https://www.ncbi.nlm.nih.gov/pmc/articles/{key}' target='_blank'>" + key \
+                          + "</td><td>" + printer(filtered_values) + "</td><td>" + printer(gevonden) + "</td></tr>"
 
-    result = result + "</table>"
-    return result
+    results_all = results_all + "</table>"
+    return results_all
 
 
 def find_in_genpanel(values, gennamen):
@@ -245,4 +251,3 @@ def printer(values):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
