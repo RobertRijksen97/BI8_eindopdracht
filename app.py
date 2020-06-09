@@ -61,24 +61,33 @@ def create_dict():
     De gebruikte zoektermen worden gereturned.
     Er wordt gereturned of er ziekte of gen door de gebruiker is ingevuld.
     """
-    zoekwoord = request.form["woord"]  # Verkrijg de klinische zoekterm.
-    zoekwoord = zoekwoord.lower()
-    gen = request.form["gen"]  # Verkrijg de genen/het gen.
-    gen_or_disease = 'Disease'
-    with open("pmc_twee.json", 'r') as file:
-        data = file.read()
-    obj = json.loads(data)
     dict_results = {}
-    g = get_gene_list(gen)
-    genes = get_synonyms(g)  # Verkrijg synoniemen van genen.
-    if g == ['']:
-        gen_or_disease, dict_results = resulting(obj, zoekwoord, gen, gen_or_disease, dict_results)
-    else:
-        for gen in genes:  # Uitvoeren als er meerdere genen zijn ingevuld.
+    gen_or_disease = 'Disease'
+    try:
+        zoekwoord = request.form["woord"]  # Verkrijg de klinische zoekterm.
+        zoekwoord = zoekwoord.lower()
+        gen = request.form["gen"]  # Verkrijg de genen/het gen.
+    except:
+        zoekwoord = ""
+        gen = ""
+    try:
+        with open("pmc_twee.json", 'r') as file:
+            data = file.read()
+        obj = json.loads(data)
+
+        g = get_gene_list(gen)
+        genes = get_synonyms(g)  # Verkrijg synoniemen van genen.
+        if g == ['']:
             gen_or_disease, dict_results = resulting(obj, zoekwoord, gen, gen_or_disease, dict_results)
-    if gen_or_disease == 'Gene':
-        zoekwoord = ','.join(g)
+        else:
+            for gen in genes:  # Uitvoeren als er meerdere genen zijn ingevuld.
+                gen_or_disease, dict_results = resulting(obj, zoekwoord, gen, gen_or_disease, dict_results)
+        if gen_or_disease == 'Gene':
+            zoekwoord = ','.join(g)
+    except:
+        gen_or_disease = ""
     return dict_results, zoekwoord, gen_or_disease
+
 
 
 def resulting(obj, zoekwoord, gen, gen_or_disease, dict_results):
@@ -92,19 +101,25 @@ def resulting(obj, zoekwoord, gen, gen_or_disease, dict_results):
     :return: Of de gebruiker een gen of ziekte heeft ingevuld.
     :return: De dictionary met PMC en genen.
     """
-    for article in obj:
-        for item in article["Article"]:
-            # Voer uit als ziekte is ingevuld, maar gen niet.
-            if zoekwoord in item["diseases"] and gen == "":
-                toevoegen_dict(item, dict_results)
-            # Voer uit als zoekterm en gen zijn ingevuld.
-            elif zoekwoord in item["diseases"] and gen != "":
-                if gen.strip() in item["genes"]:
-                    toevoegen_dict(item, dict_results)
-            # Voer uit als zoekwoord leeg is, maar gen is ingevuld.
-            elif zoekwoord == "" and gen.strip() in item["genes"]:
-                toevoegen_dict(item, dict_results)
-                gen_or_disease = 'Gene'
+    try:
+        for article in obj:
+            try:
+                for item in article["Article"]:
+                    # Voer uit als ziekte is ingevuld, maar gen niet.
+                    if zoekwoord in item["diseases"] and gen == "":
+                        toevoegen_dict(item, dict_results)
+                    # Voer uit als zoekterm en gen zijn ingevuld.
+                    elif zoekwoord in item["diseases"] and gen != "":
+                        if gen.strip() in item["genes"]:
+                            toevoegen_dict(item, dict_results)
+                    # Voer uit als zoekwoord leeg is, maar gen is ingevuld.
+                    elif zoekwoord == "" and gen.strip() in item["genes"]:
+                        toevoegen_dict(item, dict_results)
+                        gen_or_disease = 'Gene'
+            except KeyError:
+                print("key does not exist")
+    except:
+        print("Could not open file.")
     return gen_or_disease, dict_results
 
 
@@ -114,10 +129,14 @@ def get_gene_list(gen):
     :param gen: Gebruikt om te kijken of het uit meerdere genen bestaat.
     :return: Een lijst met de genen.
     """
-    if ',' in gen:
-        genes = gen.split(',')
-    else:
-        genes = [gen]
+    try:
+        if ',' in gen:
+            genes = gen.split(',')
+        else:
+            genes = [gen]
+    except:
+        print("Gene is not found.")
+        genes = []
     return genes
 
 
@@ -129,15 +148,24 @@ def get_synonyms(genes):
     :return: Lijst met genen die worden gebruikt om te zoeken.
     """
     list_gene = []
-    with open("gene.json", 'r') as file:
-        data = file.read()
-    obj = json.loads(data)
-    for gene in genes:
-        for value in obj:
-            for k, v in value.items():
-                for i in v:
-                    if gene.strip() == i.strip():
-                        list_gene = list_gene + v
+    try:
+        with open("gene.json", 'r') as file:
+            data = file.read()
+        obj = json.loads(data)
+    except:
+        print("Could not open file.")
+        obj = ""
+    try:
+        for gene in genes:
+            for value in obj:
+                for k, v in value.items():
+                    for i in v:
+                        if gene.strip() == i.strip():
+                            list_gene = list_gene + v
+    except NameError:
+        print("Variable genes is not found.")
+    except:
+        print("Unknown error occurred.")
     if len(list_gene) == 0:
         return genes
     return list_gene
@@ -166,15 +194,18 @@ def genpanel_inlezen():
     Maak een lijst met alle genen uit het genpanelbestand.
     :return: Lijst met de gennamen uit genpanel.
     """
-    file = open("GenPanels_merged_DG-2.17.0.txt")
     gennamen = []
-    for regel in file:
-        if regel.startswith("Symbol_HGNC"):
-            print("Dit zijn alle genen: ")
-        else:
-            genpanel = regel.split("\t")
-            gennaam = genpanel[0]  # Hier staat de gennaam.
-            gennamen.append(gennaam)
+    try:
+        file = open("GenPanels_merged_DG-2.17.0.txt")
+        for regel in file:
+            if regel.startswith("Symbol_HGNC"):
+                print("Dit zijn alle genen: ")
+            else:
+                genpanel = regel.split("\t")
+                gennaam = genpanel[0]  # Hier staat de gennaam.
+                gennamen.append(gennaam)
+    except:
+        print("Could not open file.")
     return gennamen
 
 
@@ -208,16 +239,19 @@ def tabel(dict, zoekwoord, gennamen, gene_or_disease):
 
 
 def find_in_genpanel(values, gennamen):
-    """Kijkt of gevonden gen in genpanel staat.    
+    """Kijkt of gevonden gen in genpanel staat.
     :param values: Bevat de gevonden genen.
     :param gennamen: Bevat de genen uit genpanelbestand.
     :return: Een lijst met de genen die zijn gevonden,
     maar ook in het genpanelbestand staan.
     """
     gevonden = []
-    for value in values:
-        if value in gennamen:
-            gevonden.append(value)
+    try:
+        for value in values:
+            if value in gennamen:
+                gevonden.append(value)
+    except:
+        print("Unknown error occurred.")
     return gevonden
 
 
@@ -229,12 +263,15 @@ def filter_genes(genes):
     """
     no_genes = ['receptor', 'protein', 'enzyme', 'enzym', 'hormone', 'insulin', 'antigen', 'ase', 'mir', 'rna']
     filtered_genes = []
-    for gen in genes:
-        if gen.count(' ') > 2:
-            pass
-        else:
-            if not any(ext in gen.lower() for ext in no_genes):
-                filtered_genes.append(gen)
+    try:
+        for gen in genes:
+            if gen.count(' ') > 2:
+                pass
+            else:
+                if not any(ext in gen.lower() for ext in no_genes):
+                    filtered_genes.append(gen)
+    except:
+        print("Variable genes is not found.")
     return filtered_genes
 
 
@@ -244,8 +281,11 @@ def printer(values):
     :return: Een string van de gevonden genen.
     """
     string_builder = ''
-    for i in values:
-        string_builder = string_builder + i + ', '
+    try:
+        for i in values:
+            string_builder = string_builder + i + ', '
+    except:
+        print("Unknown error occurred.")
     return string_builder[:-2]
 
 
