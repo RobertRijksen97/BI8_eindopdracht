@@ -6,7 +6,7 @@ Werkzeug==2.2.3
 itsdangerous==1.1.0
 click==7.1.2
 MarkupSafe==1.1.1
-setuptools==65.5.1
+setuptools==70.0.0
 Flask==2.3.2
 Scrapy==2.6.2
 selenium==3.141.0
